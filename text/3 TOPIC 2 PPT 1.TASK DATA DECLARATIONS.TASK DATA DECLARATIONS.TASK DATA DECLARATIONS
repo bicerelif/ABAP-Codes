@@ -1,0 +1,22 @@
+REPORT zdatadec1_steb.
+
+DATA: gv_name TYPE string,
+      gv_age  TYPE i,
+      gv_city TYPE string.
+
+CONSTANTS: gc_country TYPE string VALUE 'Turkey'.
+
+DATA(gv_greeting) = 'Hello'.
+DATA(gv_question) = |How are you?| .
+gv_name = 'Elif'.
+gv_age = 27.
+gv_city = 'Riga'.
+
+DATA(gv_age_str) = gv_age.
+
+WRITE: / 'Greeting:', 14 gv_greeting,
+       / 'Question:', 14 gv_question,
+       / 'Name:', 14 gv_name,
+       / 'Age:', 14 gv_age_str,
+       / 'City:', 14 gv_city,
+       / 'Country:', 14 gc_country.

@@ -1,0 +1,24 @@
+
+*&---------------------------------------------------------------------*
+*& Report Z_OOP_EX2_STEB
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z_OOP_EX2_STEB.
+* Include the airplane class
+INCLUDE ZR1_OO_STUD03_AIRPLANE.
+
+START-OF-SELECTION.
+  DATA: lo_airplane TYPE REF TO lcl_airplane.
+
+  " Create an airplane object
+  CREATE OBJECT lo_airplane
+    EXPORTING
+      im_name      = 'Boeing 747'
+      im_planetype = 'B747'.
+
+  " Display airplane attributes
+  lo_airplane->display_attributes( ).
+
+  " Display number of airplanes
+  lo_airplane->display_n_o_airplanes( ).

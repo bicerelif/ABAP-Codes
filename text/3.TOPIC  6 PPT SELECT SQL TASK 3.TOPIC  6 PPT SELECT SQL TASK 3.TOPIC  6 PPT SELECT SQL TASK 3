@@ -1,0 +1,136 @@
+*&---------------------------------------------------------------------*
+*& Report zsqlex2_steb
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zsqlex2_steb.
+
+TABLES: ztsaplane_steb.
+
+PARAMETERS: p_id TYPE zde_countr_steb,
+            p_name TYPE zde_engt_steb,
+            p_age TYPE zde_fus_steb,
+            p_note TYPE zde_note_steb,
+            p_type TYPE zde_type_steb.
+
+SELECTION-SCREEN BEGIN OF BLOCK rad1.
+PARAMETERS: r_insert RADIOBUTTON GROUP rad1 DEFAULT 'X',
+            r_update RADIOBUTTON GROUP rad1,
+            r_modify RADIOBUTTON GROUP rad1.
+SELECTION-SCREEN END OF BLOCK rad1.
+
+START-OF-SELECTION.
+
+  IF r_insert = abap_true.
+    PERFORM insert_data.
+  ELSEIF r_update = abap_true.
+    PERFORM update_data.
+  ELSEIF r_modify = abap_true.
+    PERFORM modify_data.
+  ENDIF.
+
+  PERFORM display_results.
+
+END-OF-SELECTION.
+
+FORM insert_data.
+  CLEAR ztsaplane_steb.
+  ztsaplane_steb-countr = p_id.
+  ztsaplane_steb-engt = p_name.
+  ztsaplane_steb-fus = p_age.
+  ztsaplane_steb-note = p_note.
+  ztsaplane_steb-type = p_type.
+  INSERT INTO ztsaplane_steb VALUES ztsaplane_steb.
+  IF sy-subrc = 0.
+    WRITE: / 'Record inserted successfully.'.
+  ELSE.
+    WRITE: / 'Error inserting record.'.
+  ENDIF.
+ENDFORM.
+
+FORM update_data.
+  SELECT SINGLE * FROM ztsaplane_steb WHERE countr = @p_id INTO @ztsaplane_steb.
+  IF sy-subrc = 0.
+    ztsaplane_steb-engt = p_name.
+    ztsaplane_steb-fus = p_age.
+    ztsaplane_steb-note = p_note.
+    ztsaplane_steb-type = p_type.
+    UPDATE ztsaplane_steb SET engt = @ztsaplane_steb-engt,
+                              fus = @ztsaplane_steb-fus,
+                              note = @ztsaplane_steb-note,
+                              type = @ztsaplane_steb-type
+    WHERE countr = @p_id.
+    IF sy-subrc = 0.
+      WRITE: / 'Record updated successfully.'.
+    ELSE.
+      WRITE: / 'Error updating record.'.
+    ENDIF.
+  ELSE.
+    WRITE: / 'Record not found.'.
+  ENDIF.
+ENDFORM.
+
+FORM modify_data.
+  SELECT SINGLE * FROM ztsaplane_steb WHERE countr = @p_id INTO @ztsaplane_steb.
+  IF sy-subrc = 0.
+    IF p_name IS NOT INITIAL.
+      ztsaplane_steb-engt = p_name.
+    ENDIF.
+    IF p_age IS NOT INITIAL.
+      ztsaplane_steb-fus = p_age.
+    ENDIF.
+    IF p_note IS NOT INITIAL.
+      ztsaplane_steb-note = p_note.
+    ENDIF.
+    IF p_type IS NOT INITIAL.
+      ztsaplane_steb-type = p_type.
+    ENDIF.
+    UPDATE ztsaplane_steb SET engt = @ztsaplane_steb-engt,
+                              fus = @ztsaplane_steb-fus,
+                              note = @ztsaplane_steb-note,
+                              type = @ztsaplane_steb-type
+    WHERE countr = @p_id.
+    IF sy-subrc = 0.
+      WRITE: / 'Record modified successfully.'.
+    ELSE.
+      WRITE: / 'Error modifying record.'.
+    ENDIF.
+  ELSE.
+    WRITE: / 'Record not found.'.
+  ENDIF.
+ENDFORM.
+
+FORM display_results.
+  DATA: lt_result TYPE TABLE OF ztsaplane_steb.
+
+SELECT * FROM ztsaplane_steb INTO TABLE @lt_result.
+IF sy-subrc = 0.
+  LOOP AT lt_result INTO DATA(ls_row).
+    WRITE: / ls_row-countr, ls_row-engt, ls_row-fus, ls_row-note, ls_row-type.
+  ENDLOOP.
+ELSE.
+  WRITE: / 'No records found in the table.'.
+ENDIF.
+ENDFORM.
+
+FORM insert_initial_data.
+  DATA: lt_data TYPE TABLE OF ztsaplane_steb,
+        ls_data TYPE ztsaplane_steb.
+
+  CLEAR: ls_data.
+  ls_data-countr = 'US'. ls_data-engt = 'Engine1'. ls_data-fus = 'Fuselage1'. ls_data-note = 'Note1'. ls_data-type = 'Type1'. APPEND ls_data TO lt_data.
+  ls_data-countr = 'DE'. ls_data-engt = 'Engine2'. ls_data-fus = 'Fuselage2'. ls_data-note = 'Note2'. ls_data-type = 'Type2'. APPEND ls_data TO lt_data.
+  ls_data-countr = 'FR'. ls_data-engt = 'Engine3'. ls_data-fus = 'Fuselage3'. ls_data-note = 'Note3'. ls_data-type = 'Type3'. APPEND ls_data TO lt_data.
+  ls_data-countr = 'JP'. ls_data-engt = 'Engine4'. ls_data-fus = 'Fuselage4'. ls_data-note = 'Note4'. ls_data-type = 'Type4'. APPEND ls_data TO lt_data.
+  ls_data-countr = 'UK'. ls_data-engt = 'Engine5'. ls_data-fus = 'Fuselage5'. ls_data-note = 'Note5'. ls_data-type = 'Type5'. APPEND ls_data TO lt_data.
+
+  LOOP AT lt_data INTO ls_data.
+    MOVE-CORRESPONDING ls_data TO ztsaplane_steb.
+    INSERT ztsaplane_steb.
+    IF sy-subrc = 0.
+      WRITE: / 'Record with COUNTR', ztsaplane_steb-countr, 'inserted successfully.'.
+    ELSE.
+      WRITE: / 'Error inserting record with COUNTR', ztsaplane_steb-countr.
+    ENDIF.
+  ENDLOOP.
+ENDFORM.

@@ -1,0 +1,10 @@
+METHOD travelagencyset_get_entityset.
+  DATA: lt_travelagency TYPE TABLE OF zcl_zrdc_odata_eb03_mpc=>ts_travelagency,
+        ls_travelagency TYPE zcl_zrdc_odata_eb03_mpc=>ts_travelagency.
+  SELECT country, region
+    FROM stravelag
+    INTO TABLE @lt_travelagency.
+  LOOP AT lt_travelagency INTO ls_travelagency.
+    APPEND ls_travelagency TO et_entityset.
+  ENDLOOP.
+ENDMETHOD.

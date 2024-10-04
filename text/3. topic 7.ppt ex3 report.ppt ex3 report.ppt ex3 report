@@ -1,0 +1,39 @@
+REPORT Z_CALCULATOR_STEB.
+
+DATA: lv_num1 TYPE f,
+      lv_num2 TYPE f,
+      lv_operation TYPE char1,
+      lv_result TYPE f.
+
+PARAMETERS: p_num1 TYPE decfloat34,
+            p_num2 TYPE decfloat34,
+            p_oper TYPE char1.
+
+START-OF-SELECTION.
+  lv_num1 = p_num1.
+  lv_num2 = p_num2.
+  lv_operation = p_oper.
+
+  " Call the function module
+  CALL FUNCTION 'Z_CALCULATOR_OPERATIONS_STEB'
+    EXPORTING
+      i_num1 = lv_num1
+      i_num2 = lv_num2
+      i_operation = lv_operation
+    IMPORTING
+      e_result = lv_result
+    EXCEPTIONS
+      division_by_zero = 1
+      invalid_operation = 2
+      OTHERS = 3.
+
+  " Handle exceptions
+  IF sy-subrc = 0.
+    WRITE: / 'Result: ', lv_result.
+  ELSEIF sy-subrc = 1.
+    WRITE: / 'Error: Division by zero.'.
+  ELSEIF sy-subrc = 2.
+    WRITE: / 'Error: Invalid operation.'.
+  ELSE.
+    WRITE: / 'Error: An unexpected error occurred.'.
+  ENDIF.

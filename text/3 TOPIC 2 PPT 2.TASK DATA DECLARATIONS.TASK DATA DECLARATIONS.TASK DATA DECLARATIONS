@@ -1,0 +1,18 @@
+*&---------------------------------------------------------------------*
+*& Report zdatadec2_steb
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zdatadec2_steb.
+TYPES: BEGIN OF ty_person,
+         name TYPE string,
+         age  TYPE i,
+         city TYPE string,
+       END OF ty_person.
+DATA: person TYPE ty_person.
+person-name = 'Elif Bicer'.
+person-age = 27.
+person-city = 'Riga'.
+WRITE: / 'Name:',  person-name,
+       / 'Age:',  person-age,
+       / 'City:',  person-city.

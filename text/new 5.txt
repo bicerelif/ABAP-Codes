@@ -1,0 +1,28 @@
+METHOD aircraftsset_get_entity.
+  DATA: lt_keys       TYPE /iwbep/t_mgw_name_value_pair,
+        ls_key        TYPE /iwbep/s_mgw_name_value_pair,
+        lv_planetype  TYPE saplane-planetype,
+        ls_aircraft   TYPE zcl_zrdc_odata_eb03_mpc_ext=>ts_aircrafts.
+  lt_keys = it_key_tab.
+
+  LOOP AT lt_keys INTO ls_key.
+    IF ls_key-name = 'Planetype'.
+      lv_planetype = ls_key-value.
+      EXIT.
+    ENDIF.
+  ENDLOOP.
+
+  SELECT SINGLE *
+    INTO CORRESPONDING FIELDS OF @ls_aircraft
+    FROM saplane
+    WHERE planetype = @lv_planetype.
+
+  IF sy-subrc = 0.
+    er_entity = ls_aircraft.
+  ELSE.
+    RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+      EXPORTING
+        textid = /iwbep/cx_mgw_busi_exception=>business_error
+        message = 'Record not found'.
+  ENDIF.
+ENDMETHOD.

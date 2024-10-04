@@ -1,0 +1,44 @@
+METHOD aircraftsset_get_entityset.
+  DATA: lt_filters TYPE /iwbep/t_mgw_select_option,
+        ls_filter  TYPE /iwbep/s_mgw_select_option,
+        lt_so      TYPE STANDARD TABLE OF /iwbep/s_cod_select_option,
+        ls_so      TYPE /iwbep/s_cod_select_option.
+
+
+  lt_filters = io_tech_request_context->get_filter( )->get_filter_select_options( ).
+
+
+  SELECT * FROM saplane INTO CORRESPONDING FIELDS OF TABLE @et_entityset.
+
+
+  READ TABLE lt_filters WITH TABLE KEY property = 'Planetype' INTO ls_filter.
+  IF sy-subrc = 0.
+    LOOP AT ls_filter-select_options INTO ls_so.
+      DELETE et_entityset WHERE planetype <> ls_so-low.
+    ENDLOOP.
+  ENDIF.
+
+
+  READ TABLE lt_filters WITH TABLE KEY property = 'SeatsMax' INTO ls_filter.
+  IF sy-subrc = 0.
+    LOOP AT ls_filter-select_options INTO ls_so.
+      DELETE et_entityset WHERE seatsmax <> ls_so-low.
+    ENDLOOP.
+  ENDIF.
+
+
+  READ TABLE lt_filters WITH TABLE KEY property = 'SeatsMaxB' INTO ls_filter.
+  IF sy-subrc = 0.
+    LOOP AT ls_filter-select_options INTO ls_so.
+      DELETE et_entityset WHERE seatsmax_b <> ls_so-low.
+    ENDLOOP.
+  ENDIF.
+
+  READ TABLE lt_filters WITH TABLE KEY property = 'SeatsMaxF' INTO ls_filter.
+  IF sy-subrc = 0.
+    LOOP AT ls_filter-select_options INTO ls_so.
+      DELETE et_entityset WHERE seatsmax_f <> ls_so-low.
+    ENDLOOP.
+  ENDIF.
+
+ENDMETHOD.

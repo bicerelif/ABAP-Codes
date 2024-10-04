@@ -1,0 +1,85 @@
+*&---------------------------------------------------------------------*
+*& Include ZR1_OO_STUD03_AIRPLANE
+*&---------------------------------------------------------------------*
+
+CLASS lcl_airplane DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS: pos_1 TYPE i VALUE 30.
+
+    METHODS: constructor IMPORTING im_name      TYPE string
+                                   im_planetype TYPE saplane-planetype,
+             display_attributes,
+             display_n_o_airplanes.
+
+    CLASS-METHODS: class_constructor.
+
+  PRIVATE SECTION.
+    CLASS-METHODS: get_technical_attributes
+                      IMPORTING im_type    TYPE saplane-planetype
+                      EXPORTING ex_weight  TYPE saplane-weight
+                                ex_tankcap TYPE saplane-tankcap
+                      EXCEPTIONS wrong_planetype.
+
+    DATA: name      TYPE string,
+          planetype TYPE saplane-planetype.
+
+    CLASS-DATA: n_o_airplanes TYPE i.
+    CLASS-DATA: list_of_planetypes TYPE TABLE OF saplane.
+ENDCLASS.
+
+CLASS lcl_airplane IMPLEMENTATION.
+  METHOD constructor.
+    name = im_name.
+    planetype = im_planetype.
+    n_o_airplanes = n_o_airplanes + 1.
+  ENDMETHOD. "constructor
+
+  METHOD class_constructor.
+    SELECT * FROM saplane INTO TABLE list_of_planetypes.
+  ENDMETHOD.
+
+  METHOD display_attributes.
+    DATA: weight TYPE saplane-weight,
+          cap    TYPE saplane-tankcap.
+
+    CLEAR: weight, cap.
+
+    get_technical_attributes(
+      EXPORTING im_type = planetype
+      IMPORTING ex_weight = weight
+                ex_tankcap = cap
+      EXCEPTIONS wrong_planetype = 1
+    ).
+
+    WRITE: / icon_ws_plane AS ICON,
+           / 'Name of airplane:', AT pos_1 name,
+           / 'Airplane type:', AT pos_1 planetype.
+
+    IF sy-subrc <> 0.
+      WRITE: / icon_failure AS ICON, 'WRONG_PLANETYPE'.
+    ELSE.
+      WRITE: / 'Weight of airplane:', AT pos_1 weight LEFT-JUSTIFIED,
+             / 'Tank capacity of airplane:', AT pos_1 cap LEFT-JUSTIFIED.
+    ENDIF.
+  ENDMETHOD. "display_attributes
+
+  METHOD display_n_o_airplanes.
+    WRITE: /, / 'Total number of planes:', AT pos_1 n_o_airplanes LEFT-JUSTIFIED, /.
+  ENDMETHOD. "display_n_o_airplanes
+
+  METHOD get_technical_attributes.
+    DATA: wa TYPE saplane.
+
+    READ TABLE list_of_planetypes INTO wa
+      WITH KEY planetype = im_type
+      TRANSPORTING weight tankcap.
+
+    IF sy-subrc = 0.
+      ex_weight = wa-weight.
+      ex_tankcap = wa-tankcap.
+    ELSE.
+      RAISE wrong_planetype.
+    ENDIF.
+  ENDMETHOD. "get_technical_attributes
+
+ENDCLASS. "lcl_airplane IMPLEMENTATION

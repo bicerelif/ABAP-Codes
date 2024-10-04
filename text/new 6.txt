@@ -1,0 +1,33 @@
+METHOD travelagencyset_get_entity.
+  DATA: lt_keys       TYPE /iwbep/t_mgw_name_value_pair,
+        ls_key        TYPE /iwbep/s_mgw_name_value_pair,
+        lv_agencynum  TYPE stravelag-agencynum,
+        ls_travelagency   TYPE zcl_zrdc_odata_eb03_mpc_ext=>ts_travelagency.  " Adjust the class name and type according to your project
+ 
+  " Fill the IT_KEY_TAB internal table
+  lt_keys = it_key_tab.
+ 
+  " Loop through IT_KEY_TAB to get the AGENCYNUM key
+  LOOP AT lt_keys INTO ls_key.
+    IF ls_key-name = 'Agencynum'.
+      lv_agencynum = ls_key-value.
+      EXIT.
+    ENDIF.
+  ENDLOOP.
+ 
+  " Select a single record from the STRAVELAG table
+  SELECT SINGLE *
+    INTO CORRESPONDING FIELDS OF @ls_travelagency
+    FROM stravelag
+    WHERE agencynum = @lv_agencynum.
+ 
+  " Assign the record to ER_ENTITY
+  IF sy-subrc = 0.
+    er_entity = ls_travelagency.
+  ELSE.
+    RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+      EXPORTING
+        textid = /iwbep/cx_mgw_busi_exception=>business_error
+        message = 'Record not found'.
+  ENDIF.
+ENDMETHOD.

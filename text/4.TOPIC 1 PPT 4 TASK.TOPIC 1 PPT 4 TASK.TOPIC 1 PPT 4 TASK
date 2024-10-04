@@ -1,0 +1,81 @@
+*&---------------------------------------------------------------------*
+*& Report Z_OOP_EX4_STEB
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z_oop_ex4_steb.
+
+PARAMETERS: p_date TYPE sy-datum DEFAULT sy-datum.
+
+DATA: lv_date            TYPE sy-datum,
+      lv_date_plus_month TYPE sy-datum,
+      lv_date_plus_all   TYPE sy-datum,
+      lv_time_zone       TYPE sy-zonlo,
+      lv_current_date    TYPE sy-datum,
+      lv_current_time    TYPE sy-uzeit,
+      lv_weekday         TYPE c LENGTH 10,
+      lv_month_start     TYPE sy-datum,
+      lv_month_end       TYPE sy-datum,
+      lv_month           TYPE n LENGTH 2,
+      lv_year            TYPE n LENGTH 4,
+      lv_temp_date       TYPE sy-datum.
+
+lv_date = p_date.
+
+
+lv_date_plus_month = cl_reca_date=>add_months_to_date(
+  EXPORTING
+    id_date  = lv_date
+    id_months = 1
+).
+
+
+lv_date_plus_all = cl_reca_date=>add_to_date(
+  EXPORTING
+    id_date  = lv_date
+    id_years = 1
+    id_months = 1
+    id_days   = 1
+).
+
+
+lv_time_zone = sy-zonlo.
+lv_current_date = sy-datum.
+lv_current_time = sy-uzeit.
+
+
+lv_weekday = cl_reca_date=>get_weekday(
+  EXPORTING
+    id_date = lv_date
+).
+
+
+lv_month_start = lv_date.
+lv_temp_date = lv_month_start.
+
+lv_month_start = lv_month_start+0(6) && '01'.
+
+
+lv_temp_date = lv_month_start + 31.
+lv_temp_date = lv_temp_date - ( lv_temp_date+6(2) - '01' ).
+lv_month_end = lv_temp_date.
+
+
+lv_month = lv_date+4(2).
+lv_year = lv_date+0(4).
+
+START-OF-SELECTION.
+WRITE: / 'Entered Date is', lv_date.
+WRITE: / 'Entered Date + 1 month', lv_date_plus_month.
+WRITE: / 'Entered Date + (1 year, 1 month, 1 day)', lv_date_plus_all.
+WRITE: /.
+WRITE: / 'Timezone', lv_time_zone.
+WRITE: / 'Current Date', lv_current_date.
+WRITE: / 'Current Time', lv_current_time.
+WRITE: /.
+WRITE: / 'Month start Date', lv_month_start.
+WRITE: / 'Month End Date', lv_month_end.
+WRITE: / 'Month', lv_month.
+WRITE: / 'Year', lv_year.
+WRITE: /.
+WRITE: / 'Weekday', lv_weekday.

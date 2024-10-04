@@ -1,0 +1,19 @@
+*&---------------------------------------------------------------------*
+*& Report Z_TEMP_CONVERSION_STEB
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z_TEMP_CONVERSION_STEB.
+
+
+PARAMETERS: p_cels TYPE p DECIMALS 2,
+            p_fahr TYPE p DECIMALS 2.
+
+DATA: v_fahr TYPE p DECIMALS 2,
+      v_cels TYPE p DECIMALS 2.
+
+v_fahr = ( p_cels * 9 / 5 ) + 32.
+v_cels = ( p_fahr - 32 ) * 5 / 9.
+
+WRITE: / 'Celsius to Fahrenheit:', p_cels, 'C =', v_fahr, 'F',
+       / 'Fahrenheit to Celsius:', p_fahr, 'F =', v_cels, 'C'.

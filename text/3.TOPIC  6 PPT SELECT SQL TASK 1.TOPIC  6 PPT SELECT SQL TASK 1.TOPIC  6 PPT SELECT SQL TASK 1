@@ -1,0 +1,49 @@
+*&---------------------------------------------------------------------*
+*& Report zselectsqlex1_steb
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zselectsqlex1_steb.
+
+
+TABLES: spfli.
+
+DATA: it_spfli TYPE STANDARD TABLE OF spfli,
+      wa_spfli TYPE spfli.
+
+PARAMETERS: p_carrid TYPE spfli-carrid OBLIGATORY.
+
+SELECT-OPTIONS: s_connid FOR spfli-connid.
+
+START-OF-SELECTION.
+
+SELECT carrid
+       connid
+       cityfrom
+       airpfrom
+       cityto
+       airpto
+       fltime
+       distance
+  INTO CORRESPONDING FIELDS OF TABLE it_spfli
+  FROM spfli
+  WHERE carrid = p_carrid
+    AND connid IN s_connid.
+
+
+IF it_spfli[] IS INITIAL.
+  WRITE: 'No data found for the given criteria.'.
+  EXIT.
+ENDIF.
+
+LOOP AT it_spfli INTO wa_spfli.
+  WRITE: / 'Airline Code: ', wa_spfli-carrid,
+         'Connection Number: ', wa_spfli-connid,
+         'Departure City: ', wa_spfli-cityfrom,
+         'Departure Airport: ', wa_spfli-airpfrom,
+         'Arrival City: ', wa_spfli-cityto,
+         'Destination Airport: ', wa_spfli-airpto,
+         'Flight Time: ', wa_spfli-fltime,
+         'Distance: ', wa_spfli-distance.
+ENDLOOP.
+

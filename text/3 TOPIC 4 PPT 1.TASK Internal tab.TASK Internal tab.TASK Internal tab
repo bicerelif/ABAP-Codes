@@ -1,0 +1,58 @@
+*&---------------------------------------------------------------------*
+*& Report zinternaltabletask_steb
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zinternaltabletask_steb.
+
+TYPES: BEGIN OF ty_plane_data,
+         mandt      TYPE ztsaplane_steb-mandt,
+         planetype  TYPE ztsaplane_steb-planetype,
+         dats       TYPE ztsaplane_steb-dats,
+         type       TYPE ztsaplane_steb-type,
+         countr     TYPE ztsaplane_steb-countr,
+         engt       TYPE ztsaplane_steb-engt,
+         fus        TYPE ztsaplane_steb-fus,
+         note       TYPE ztsaplane_steb-note,
+       END OF ty_plane_data.
+
+DATA: it_plane_data TYPE TABLE OF ty_plane_data,
+      wa_plane_data TYPE ty_plane_data.
+
+SELECT mandt
+       planetype
+       dats
+       type
+       countr
+       engt
+       fus
+       note
+  INTO TABLE it_plane_data
+  FROM ztsaplane_steb.
+
+SORT it_plane_data BY dats DESCENDING.
+
+READ TABLE it_plane_data INTO wa_plane_data INDEX 1.
+
+WRITE: / 'Most Recent Production Record:',
+       / 'Client:', wa_plane_data-mandt,
+       / 'Plane Type:', wa_plane_data-planetype,
+       / 'Date:', wa_plane_data-dats,
+       / 'Type:', wa_plane_data-type,
+       / 'Country:', wa_plane_data-countr,
+       / 'Engine Type:', wa_plane_data-engt,
+       / 'Fuselage Characteristics:', wa_plane_data-fus,
+       / 'Notes:', wa_plane_data-note.
+
+LOOP AT it_plane_data INTO wa_plane_data.
+  WRITE: / 'Client:', wa_plane_data-mandt,
+         / 'Plane Type:', wa_plane_data-planetype,
+         / 'Date:', wa_plane_data-dats,
+         / 'Type:', wa_plane_data-type,
+         / 'Country:', wa_plane_data-countr,
+         / 'Engine Type:', wa_plane_data-engt,
+         / 'Fuselage Characteristics:', wa_plane_data-fus,
+         / 'Notes:', wa_plane_data-note.
+ENDLOOP.
+
+FREE it_plane_data.

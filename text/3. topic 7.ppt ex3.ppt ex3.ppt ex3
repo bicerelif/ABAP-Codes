@@ -1,0 +1,33 @@
+FUNCTION Z_CALCULATOR_OPERATIONS_STEB.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     REFERENCE(I_NUM1) TYPE  FLOAT
+*"     REFERENCE(I_NUM2) TYPE  FLOAT
+*"     REFERENCE(I_OPERATION) TYPE  CHAR1
+*"  EXPORTING
+*"     REFERENCE(E_RESULT) TYPE  FLOAT
+*"  EXCEPTIONS
+*"      DIVISION_BY_ZERO
+*"      INVALID_OPERATION
+*"----------------------------------------------------------------------
+
+
+  CASE I_OPERATION.
+    WHEN '+'.
+      E_RESULT = I_NUM1 + I_NUM2.
+    WHEN '-'.
+      E_RESULT = I_NUM1 - I_NUM2.
+    WHEN '*'.
+      E_RESULT = I_NUM1 * I_NUM2.
+    WHEN '/'.
+      IF I_NUM2 = 0.
+        RAISE DIVISION_BY_ZERO.
+      ELSE.
+        E_RESULT = I_NUM1 / I_NUM2.
+      ENDIF.
+    WHEN OTHERS.
+      RAISE INVALID_OPERATION.
+  ENDCASE.
+
+ENDFUNCTION.

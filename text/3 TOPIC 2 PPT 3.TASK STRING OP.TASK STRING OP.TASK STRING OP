@@ -1,0 +1,58 @@
+*&---------------------------------------------------------------------*
+*& Report zstringop_steb
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zstringop_steb.
+TYPES: BEGIN OF ty_person,
+         first_name TYPE string,
+         last_name  TYPE string,
+         birthdate  TYPE d,       " Date format
+         date(2)       TYPE c,
+         month(2)      TYPE c,
+         year(4)       TYPE c,
+         id         TYPE string,
+       END OF ty_person.
+
+DATA: lv_person TYPE ty_person.
+
+lv_person-first_name = 'Elif'.
+lv_person-last_name  = 'Bicer'.
+lv_person-birthdate  = '19970309'.  " Format YYYYMMDD
+
+lv_person-date = lv_person-birthdate+6(2).
+lv_person-month = lv_person-birthdate+4(2).
+lv_person-year = lv_person-birthdate+0(4).
+
+lv_person-id = lv_person-first_name+0(1) && lv_person-last_name+0(1).
+
+WRITE: / 'First Name: ', lv_person-first_name,
+       / 'Last Name: ', lv_person-last_name,
+       / 'Birthdate: ', lv_person-date, '-', lv_person-month, '-', lv_person-year,
+       / 'ID: ', lv_person-id.
+	   
+	   
+	   
+	   
+	   
+	   
+	   *&---------------------------------------------------------------------*
+*& Report zparameters2_steb
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zparameters2_steb.
+
+SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE text-001.
+PARAMETERS: p_num1 TYPE i,
+            p_num2 TYPE i,
+            cb_1 AS CHECKBOX,
+            rb_1 RADIOBUTTON GROUP g1,
+            rb_2 RADIOBUTTON GROUP g1.
+SELECTION-SCREEN END OF BLOCK b1.
+
+  DATA: result TYPE i.
+  result = p_num1 + p_num2.
+  WRITE: / 'First Number: ', 11 ,
+         / 'Second Number: ', 14 ,
+         / 'Sum: ', result.

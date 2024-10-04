@@ -1,0 +1,140 @@
+*&---------------------------------------------------------------------*
+*& Report z_display_alv_steb
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT z_display_alv_steb.
+
+TABLES: ztsaplane_steb.
+
+TYPES:
+  BEGIN OF ty_plane,
+    mandt     TYPE ztsaplane_steb-mandt,
+    planetype TYPE ztsaplane_steb-planetype,
+    dats      TYPE ztsaplane_steb-dats,
+    type      TYPE ztsaplane_steb-type,
+    countr    TYPE ztsaplane_steb-countr,
+    engt      TYPE ztsaplane_steb-engt,
+    fus       TYPE ztsaplane_steb-fus,
+    note      TYPE ztsaplane_steb-note,
+  END OF ty_plane.
+
+DATA:
+  lt_plane_data TYPE TABLE OF ty_plane,
+  lt_fieldcat   TYPE slis_t_fieldcat_alv,
+  ls_fieldcat   TYPE slis_fieldcat_alv.
+
+DATA:
+  gs_layout     TYPE slis_layout_alv,
+  gt_variant    TYPE disvariant,
+  gs_variant    TYPE disvariant.
+
+PARAMETERS:
+  p_disp1 TYPE c RADIOBUTTON GROUP rad1 DEFAULT 'X',
+  p_disp2 TYPE c RADIOBUTTON GROUP rad1.
+
+SELECT-OPTIONS:
+  s_var FOR gs_variant-variant.
+
+INITIALIZATION.
+  CALL FUNCTION 'REUSE_ALV_VARIANT_DEFAULT_GET'
+    EXPORTING
+      i_save     = 'A'
+    CHANGING
+      cs_variant = gs_variant
+    EXCEPTIONS
+      OTHERS     = 1.
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR s_var-low.
+  CALL FUNCTION 'REUSE_ALV_VARIANT_F4'
+    EXPORTING
+      is_variant = gs_variant
+    CHANGING
+      cs_variant = gs_variant
+    EXCEPTIONS
+      OTHERS     = 1.
+
+START-OF-SELECTION.
+  IF p_disp1 = 'X'.
+    SELECT mandt
+           planetype
+           dats
+           type
+           countr
+           engt
+           fus
+           note
+      FROM ztsaplane_steb
+      INTO TABLE lt_plane_data.
+  ENDIF.
+
+  CLEAR: lt_fieldcat, ls_fieldcat.
+
+  ls_fieldcat-fieldname = 'MANDT'.
+  ls_fieldcat-seltext_l = 'Client'.
+  ls_fieldcat-outputlen = 10.
+  ls_fieldcat-col_pos   = 1.
+  APPEND ls_fieldcat TO lt_fieldcat.
+
+  ls_fieldcat-fieldname = 'PLANETYPE'.
+  ls_fieldcat-seltext_l = 'Aircraft Type'.
+  ls_fieldcat-outputlen = 20.
+  ls_fieldcat-col_pos   = 2.
+  APPEND ls_fieldcat TO lt_fieldcat.
+
+  ls_fieldcat-fieldname = 'DATS'.
+  ls_fieldcat-seltext_l = 'Date'.
+  ls_fieldcat-outputlen = 10.
+  ls_fieldcat-col_pos   = 3.
+  APPEND ls_fieldcat TO lt_fieldcat.
+
+  ls_fieldcat-fieldname = 'TYPE'.
+  ls_fieldcat-seltext_l = 'Type'.
+  ls_fieldcat-outputlen = 15.
+  ls_fieldcat-col_pos   = 4.
+  APPEND ls_fieldcat TO lt_fieldcat.
+
+  ls_fieldcat-fieldname = 'COUNTR'.
+  ls_fieldcat-seltext_l = 'Production Country'.
+  ls_fieldcat-outputlen = 20.
+  ls_fieldcat-col_pos   = 5.
+  APPEND ls_fieldcat TO lt_fieldcat.
+
+  ls_fieldcat-fieldname = 'ENGT'.
+  ls_fieldcat-seltext_l = 'Engine Type'.
+  ls_fieldcat-outputlen = 15.
+  ls_fieldcat-col_pos   = 6.
+  APPEND ls_fieldcat TO lt_fieldcat.
+
+  ls_fieldcat-fieldname = 'FUS'.
+  ls_fieldcat-seltext_l = 'Fuselage Characteristics'.
+  ls_fieldcat-outputlen = 25.
+  ls_fieldcat-col_pos   = 7.
+  APPEND ls_fieldcat TO lt_fieldcat.
+
+  ls_fieldcat-fieldname = 'NOTE'.
+  ls_fieldcat-seltext_l = 'Notes'.
+  ls_fieldcat-outputlen = 30.
+  ls_fieldcat-col_pos   = 8.
+  APPEND ls_fieldcat TO lt_fieldcat.
+
+  gs_layout-zebra = 'X'.
+  gs_layout-colwidth_optimize = 'X'.
+
+  gs_variant-report = sy-repid.
+
+  CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'
+    EXPORTING
+      it_fieldcat   = lt_fieldcat
+      is_layout     = gs_layout
+      i_save        = 'A'
+      is_variant    = gs_variant
+    TABLES
+      t_outtab      = lt_plane_data
+    EXCEPTIONS
+      program_error = 1
+      OTHERS        = 2.
+
+  IF sy-subrc <> 0.
+    WRITE: / 'Error in REUSE_ALV_GRID_DISPLAY'.
+  ENDIF.

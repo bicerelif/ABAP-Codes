@@ -1,0 +1,67 @@
+*&---------------------------------------------------------------------*
+*& Report zselectsqlex2_steb
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT zselectsqlex2_steb.
+
+TABLES: spfli, scarr.
+
+TYPES: BEGIN OF ty_flight_info,
+         carrid    TYPE spfli-carrid,
+         connid    TYPE spfli-connid,
+         cityfrom  TYPE spfli-cityfrom,
+         airpfrom  TYPE spfli-airpfrom,
+         cityto    TYPE spfli-cityto,
+         airpto    TYPE spfli-airpto,
+         fltime    TYPE spfli-fltime,
+         distance  TYPE spfli-distance,
+         carrname  TYPE scarr-carrname,
+         url       TYPE scarr-url,
+       END OF ty_flight_info.
+
+DATA: it_flights TYPE STANDARD TABLE OF ty_flight_info,
+      wa_flight  TYPE ty_flight_info.
+
+PARAMETERS: p_carrid TYPE spfli-carrid OBLIGATORY.
+
+SELECT-OPTIONS: s_connid FOR spfli-connid OBLIGATORY.
+
+START-OF-SELECTION.
+
+
+SELECT a~carrid
+       a~connid
+       a~cityfrom
+       a~airpfrom
+       a~cityto
+       a~airpto
+       a~fltime
+       a~distance
+       b~carrname
+       b~url
+  INTO CORRESPONDING FIELDS OF TABLE it_flights
+  FROM spfli AS a
+  INNER JOIN scarr AS b
+  ON a~carrid = b~carrid
+  WHERE a~carrid = p_carrid
+    AND a~connid IN s_connid.
+
+
+IF it_flights[] IS INITIAL.
+  WRITE: 'No data found for the given criteria.'.
+  EXIT.
+ENDIF.
+
+LOOP AT it_flights INTO wa_flight.
+  WRITE: / 'Airline Code: ', wa_flight-carrid,
+         'Airline Name: ', wa_flight-carrname,
+         'Flight Connection Number: ', wa_flight-connid,
+         'Departure City: ', wa_flight-cityfrom,
+         'Departure Airport: ', wa_flight-airpfrom,
+         'Arrival City: ', wa_flight-cityto,
+         'Destination Airport: ', wa_flight-airpto,
+         'Flight Time: ', wa_flight-fltime,
+         'Distance: ', wa_flight-distance,
+         'Airline URL: ', wa_flight-url.
+ENDLOOP.

@@ -1,0 +1,16 @@
+METHOD aircraftsset_get_entityset.
+  DATA lt_filters TYPE /iwbep/t_mgw_select_option.
+  DATA ls_filter TYPE /iwbep/s_mgw_select_option.
+  DATA lt_so TYPE STANDARD TABLE OF /iwbep/s_cod_select_option.
+  DATA ls_so TYPE /iwbep/s_cod_select_option.
+  " Get filters
+  lt_filters = io_tech_request_context->get_filter( )->get_filter_select_options( ).
+  SELECT * FROM saplane
+    INTO CORRESPONDING FIELDS OF TABLE @et_entityset.
+  " Apply filter
+  READ TABLE lt_filters WITH TABLE KEY property = 'PLANETYPE' INTO ls_filter.
+  LOOP AT ls_filter-select_options INTO ls_so.
+    INSERT ls_so INTO TABLE lt_so.
+  ENDLOOP.
+  DELETE et_entityset WHERE planetype NOT IN lt_so.
+ENDMETHOD.

@@ -1,0 +1,51 @@
+*&---------------------------------------------------------------------*
+*& Report Z_REPORT_DISPLAY_RESULTS_STEB
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z_REPORT_DISPLAY_RESULTS_STEB.
+
+PARAMETERS: p_int1 TYPE i,
+            p_int2 TYPE i,
+            p_int3 TYPE i.
+
+DATA: lv_result1 TYPE i,
+      lv_result2 TYPE i,
+      lv_result3 TYPE i,
+      lv_add1_2  TYPE i,
+      lv_add2_3  TYPE i,
+      lv_sub1_2  TYPE i,
+      lv_sub2_3  TYPE i.
+
+CALL FUNCTION 'Z_ACCEPT_THREE_INTEGERS_STEB'
+  EXPORTING
+    int1 = p_int1
+    int2 = p_int2
+    int3 = p_int3
+  IMPORTING
+    result1 = lv_result1
+    result2 = lv_result2
+    result3 = lv_result3.
+
+CALL FUNCTION 'Z_ADD_INTEGERS_STEB'
+  EXPORTING
+    int1 = lv_result1
+    int2 = lv_result2
+    int3 = lv_result3
+  IMPORTING
+    add1_2 = lv_add1_2
+    add2_3 = lv_add2_3.
+
+CALL FUNCTION 'Z_SUBTRACT_INTEGERS_STEB'
+  EXPORTING
+    int1 = lv_result1
+    int2 = lv_result2
+    int3 = lv_result3
+  IMPORTING
+    sub1_2 = lv_sub1_2
+    sub2_3 = lv_sub2_3.
+
+WRITE: / 'Addition of Integer 1 and Integer 2:', lv_add1_2,
+       / 'Addition of Integer 2 and Integer 3:', lv_add2_3,
+       / 'Subtraction of Integer 1 and Integer 2:', lv_sub1_2,
+       / 'Subtraction of Integer 2 and Integer 3:', lv_sub2_3.
