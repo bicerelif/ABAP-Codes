@@ -10,8 +10,8 @@ This folder contains a collection of ABAP code examples focused on text processi
 
 ## File Structure
 Each file in this folder provides a focused example on a specific aspect of text processing:
-- **Example1.abap:** [Description – e.g., "Demonstrates basic file I/O operations."]
-- **Example2.abap:** [Description – e.g., "Shows advanced string manipulation techniques."]
+- **Example1.abap:** [Description – "Demonstrates basic file I/O operations."]
+- **Example2.abap:** [Description – "Shows advanced string manipulation techniques."]
 
 
 ## Prerequisites
